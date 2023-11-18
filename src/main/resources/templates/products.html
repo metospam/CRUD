@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+    <!-- Добавьте ссылку на Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-4">
+    <h2>Products</h2>
+
+    <form action="." method="get" class="mb-3">
+        <div class="form-group">
+            <input type="text" name="query" class="form-control" th:value="${query}" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <form th:action="@{/delete}" method="post" class="mt-5">
+        <table class="table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Image Path</th>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Type</th>
+                <th>Edit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Итерация по списку продуктов и отображение их данных в таблице -->
+                <tr th:each="product : ${products}">
+                    <td><input type="checkbox" name="selectedProducts" th:value="${product.id}" /></td>
+                    <td th:text="${product.imagePath}">
+                        <img th:if="${product.imagePath}" th:src="${product.imagePath}" th:alt="${product.name}">
+                    </td>
+                    <td th:text="${product.sku}"></td>
+                    <td th:text="${product.name}"></td>
+                    <td th:text="${product.quantity}"></td>
+                    <td th:text="${product.type}"></td>
+                    <td>
+                        <a th:href="@{/edit/{id}(id=${product.id})}" class="btn btn-primary">Edit</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary">Удалить</button>
+    </form>
+
+    <div class="mt-3" th:if="${products.totalPages > 1}">
+        <ul class="pagination mt-3">
+            <li th:class="${products.number == 0} ? 'disabled' : ''" class="page-item">
+                <a th:href="@{'?page=' + ${products.number - 1}}" class="page-link">Previous</a>
+            </li>
+            <li th:each="pageNumber : ${#numbers.sequence(0, products.totalPages - 1)}" th:class="${pageNumber == products.number} ? 'active' : ''" class="page-item">
+                <a th:href="@{'?page=' + ${pageNumber}}" th:text="${pageNumber + 1}" class="page-link"></a>
+            </li>
+            <li th:class="${products.number == products.totalPages - 1} ? 'disabled' : ''" class="page-item">
+                <a th:href="@{'?page=' + ${products.number + 1}}" class="page-link">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    li.disabled{
+        opacity: .6;
+        pointer-events: none;
+    }
+</style>
+
+<!-- Добавьте ссылку на Bootstrap JS и Popper.js (если необходимо) -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
